@@ -1,0 +1,41 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: flink
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: flink
+  serviceName: flink
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flink
+    spec:
+      containers:
+        - name: spark
+          image: {{ .Values.image }}
+          imagePullPolicy: Never
+          command:
+            - sleep
+            - infinity
+          volumeMounts:
+            - name: hdfs-conf
+              mountPath: /home/flink/hadoop-current/etc/hadoop/core-site.xml
+              subPath: core-site.xml
+            - name: hdfs-conf
+              mountPath: /home/flink/hadoop-current/etc/hadoop/hdfs-site.xml
+              subPath: hdfs-site.xml
+            - name: yarn-conf
+              mountPath: /home/flink/hadoop-current/etc/hadoop/yarn-site.xml
+              subPath: yarn-site.xml
+      volumes:
+        - name: hdfs-conf
+          configMap:
+            name: hdfs-conf
+        - name: yarn-conf
+          configMap:
+            name: yarn-conf
