@@ -22,6 +22,9 @@ COPY --from=builder /hadoop-* hadoop-current
 COPY --from=builder /jdk-* /opt/java
 COPY ./*.jar /home/flink/flink-current/lib
 
+RUN ln -snf /home/flink/hadoop-current/share/hadoop/mapreduce/hadoop-mapreduce-client-core-*.jar \
+	/home/flink/flink-current/lib
+
 ENV PATH="/opt/java/bin:/home/flink/hadoop-current/bin:/home/flink/flink-current/bin:${PATH}"
 ENV JAVA_HOME='/opt/java'
 ENV HADOOP_CLASSPATH="/home/flink/hadoop-current/etc/hadoop:\
