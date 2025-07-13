@@ -20,6 +20,7 @@ WORKDIR /home/flink
 COPY --from=builder flink-* /home/flink/flink-current
 COPY --from=builder /hadoop-* hadoop-current
 COPY --from=builder /jdk-* /opt/java
+COPY ./*.jar /home/flink/flink-current/lib
 
 ENV PATH="/opt/java/bin:/home/flink/hadoop-current/bin:/home/flink/flink-current/bin:${PATH}"
 ENV JAVA_HOME='/opt/java'
