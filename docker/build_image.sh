@@ -15,43 +15,43 @@ fi
 
 if [[ "${arch}" == 'x86_64' ]]; then
 	# shellcheck disable=2034
-	declare -r JAVA_URL="https://download.oracle.com/java/17/archive/jdk-17.0.12_linux-${arch/86_/}_bin.tar.gz"
+	declare -r JAVA_URL="https://corretto.aws/downloads/resources/17.0.19.10.1/amazon-corretto-17.0.19.10.1-linux-${arch/86_/}.tar.gz"
 	# shellcheck disable=2034
-	declare -r JAVA_SHA256SUM='311f1448312ecab391fe2a1b2ac140d6e1c7aea6fbf08416b466a58874f2b40f'
+	declare -r JAVA_SHA512SUM='c2ec54f90191e99dc551e3c072d3ea9e4e20b938162bfbc79cd90ea1065e41705950998f89c134842c8957a8eab29a2a1539512f130d2e8f6370573af564bb7c'
 	# shellcheck disable=2034
-	declare -r HADOOP_URL='https://archive.apache.org/dist/hadoop/common/hadoop-3.4.0/hadoop-3.4.0.tar.gz'
+	declare -r HADOOP_URL='https://archive.apache.org/dist/hadoop/common/hadoop-3.5.0/hadoop-3.5.0.tar.gz'
 	# shellcheck disable=2034
-	declare -r HADOOP_SHA256SUM='e311a78480414030f9ec63549a5d685e69e26f207103d9abf21a48b9dd03c86c'
+	declare -r HADOOP_SHA512SUM='04ab94496cc00c8b7a28d03f6308eff8d2a4e7f37a9da5e8e086e4d6fc990e7a94d661908f6a6136039536efb362614b8aecdef185b5fb8ed588f0b152c7aa16'
 else
 	# shellcheck disable=2034
-	declare -r JAVA_URL="https://download.oracle.com/java/17/archive/jdk-17.0.12_linux-${arch}_bin.tar.gz"
+	declare -r JAVA_URL="https://corretto.aws/downloads/resources/17.0.19.10.1/amazon-corretto-17.0.19.10.1-linux-${arch}.tar.gz"
 	# shellcheck disable=2034
-	declare -r JAVA_SHA256SUM='31c2fa06f3f98d92984a86269c71e6b9e956272084f3a1d2db6d07e6164b2f4f'
+	declare -r JAVA_SHA512SUM='b90dafc4aa4f1d4b26f7081330116b811e2ef3203cdaaf932ee8f7190a886e34cb49309395eceac1efc365312be3e113daa6eafc0e6dcfa594469608c1e7e279'
 	# shellcheck disable=2034
-	declare -r HADOOP_URL="https://archive.apache.org/dist/hadoop/common/hadoop-3.4.0/hadoop-3.4.0-${arch}.tar.gz"
+	declare -r HADOOP_URL="https://archive.apache.org/dist/hadoop/common/hadoop-3.5.0/hadoop-3.5.0-${arch}.tar.gz"
 	# shellcheck disable=2034
-	declare -r HADOOP_SHA256SUM='416c732ad372c3f03370732fd2fee48fdd69c351ceed500df4c1cef3871a164f'
+	declare -r HADOOP_SHA512SUM='feaa20fea4709050ee993aae23b05720383a0d65aeda97c68d042e52564e8e77a83196a5a6973abdc690a1e600a73308ade56ccf9baeec231d1cf0810703430f'
 fi
 
 # shellcheck disable=2034
-declare -r FLINK_URL='https://archive.apache.org/dist/flink/flink-1.20.2/flink-1.20.2-bin-scala_2.12.tgz'
+declare -r FLINK_URL='https://archive.apache.org/dist/flink/flink-2.2.1/flink-2.2.1-bin-scala_2.12.tgz'
 # shellcheck disable=2034
-declare -r FLINK_SHA256SUM='76923477b2d12a992f1713954c03611a37a293349ae9e21e163790c1fd6a676a'
+declare -r FLINK_SHA512SUM='9beb619520a9b9a94d71e165f51c2c2bf67d180fee2a6f88a85b05f23b513efd12897669b6b8b000a7f16c8c8835c3bdb1e7b83133ef63056dc98a2a67105f60'
 
 function download() {
 	local package
 	package="$(echo "${1}" | awk '{print toupper($0)}')"
 	local url_variable="${package}_URL"
-	local checksum_variable="${package}_SHA256SUM"
+	local sha512sum_variable="${package}_SHA512SUM"
 
 	local url="${!url_variable}"
-	local checksum="${!checksum_variable}"
+	local checksum="${!sha512sum_variable}"
+	local checksum_command
+	checksum_command="$(command -v gsha512sum || command -v sha512sum)"
 	local filename
 	filename="$(basename "${url}")"
 
-	local SHA256SUM
-	SHA256SUM="$(command -v gsha256sum || true)"
-	if [[ ! -f "${filename}" ]] || ! echo "${checksum} ${filename}" | "${SHA256SUM:-sha256sum}" --check &>/dev/null; then
+	if [[ ! -f "${filename}" ]] || ! echo "${checksum} ${filename}" | "${checksum_command}" --check &>/dev/null; then
 		curl -LO "${url}"
 	fi
 }

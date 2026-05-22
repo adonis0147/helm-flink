@@ -8,8 +8,8 @@ RUN tar -zxvf flink-*.tgz -C /
 COPY hadoop-*.tar.gz .
 RUN tar -zxvf hadoop-*.tar.gz -C /
 
-COPY jdk-* .
-RUN tar -zxvf jdk-*.tar.gz -C /
+COPY amazon-corretto-* .
+RUN tar -zxvf amazon-corretto-*.tar.gz -C /
 
 FROM ubuntu:latest
 
@@ -19,7 +19,7 @@ WORKDIR /home/flink
 
 COPY --from=builder flink-* /home/flink/flink-current
 COPY --from=builder /hadoop-* hadoop-current
-COPY --from=builder /jdk-* /opt/java
+COPY --from=builder /amazon-corretto-* /opt/java
 COPY ./*.jar /home/flink/flink-current/lib
 
 RUN ln -snf /home/flink/hadoop-current/share/hadoop/mapreduce/hadoop-mapreduce-client-core-*.jar \
