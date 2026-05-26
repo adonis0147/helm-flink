@@ -13,6 +13,7 @@ RUN tar -zxvf amazon-corretto-*.tar.gz -C /
 
 FROM ubuntu:latest
 
+RUN apt update && apt install -y bsdextrautils
 RUN mkdir -p /home/flink
 
 WORKDIR /home/flink
